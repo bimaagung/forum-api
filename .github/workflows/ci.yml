@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  container-job:
+  test:
     runs-on: ubuntu-latest
 
     container: node:16

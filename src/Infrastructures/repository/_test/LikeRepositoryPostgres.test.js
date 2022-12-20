@@ -37,10 +37,10 @@ describe('LikeRepositoryPostgres', () => {
       const result = await likeRepositoryPostgres.addLikeThread(like);
 
       // Assert
-      const likeThread = await LikeRepositoryPostgres.findThreadLikes('like-123');
+      const likeThread = await LikesTableTestHelper.findThreadLikes('like-123');
       expect(likeThread).toHaveLength(1);
 
-      expect(result[0].id).toEqual('like-123');
+      expect(result.rows[0].id).toEqual('like-123');
     });
   });
 });
