@@ -1,7 +1,7 @@
 const CommentRepository = require('../CommentRepository');
 
 describe('CommentRepository interface', () => {
-  it('should ', async () => {
+  it('should throw error when invoke unimplemented method', async () => {
     // Arrange
     const commentRepository = new CommentRepository();
 
