@@ -13,7 +13,7 @@ jobs:
       matrix:
         node-version: [14.x]
     
-    container: node:10.18-jessie
+    container: node:16
 
     services:
       postgres:
