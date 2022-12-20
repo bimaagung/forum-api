@@ -16,7 +16,6 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD_TEST }}
-          POSTGRES_DB: ${{ secrets.PGDATABASE_TEST }},${{ secrets.PGDATABASE }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
