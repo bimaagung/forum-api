@@ -6,24 +6,16 @@ on:
       - master
 
 jobs:
-  container-job:
+  test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [14.x]
-    
-    container: node:10.18-jessie
+    container: node:16
 
     services:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: ${{ secrets.PGUSER_TEST }}
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD_TEST }}
-          POSTGRES_DB: ${{ secrets.PGDATABASE_TEST }},${{ secrets.PGDATABASE }}
-        ports:
-          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -33,8 +25,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-        with:
-          node-version: ${{ matrix.node-version }}
       - name: npm install migrate and test
         run: |
           npm install
