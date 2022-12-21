@@ -6,9 +6,9 @@ describe('LikeRepository interfase', () => {
     const likeRepository = new LikeRepository();
 
     // Action & Assert
-    await expect(() => likeRepository.addLikeThread({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
-    await expect(() => likeRepository.deleteLikeThread({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
-    await expect(() => likeRepository.verifyLikeThread({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
-    await expect(() => likeRepository.totalLikeThread({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
+    await expect(() => likeRepository.addLikeComment({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
+    await expect(() => likeRepository.deleteLikeComment({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
+    await expect(() => likeRepository.verifyLikeComment({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
+    await expect(() => likeRepository.totalLikeComment({})).rejects.toThrowError('COMMENT.METHOD_NOT_IMPLEMENTED');
   });
 });

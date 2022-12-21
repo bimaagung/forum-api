@@ -1,17 +1,17 @@
 class LikeRepository {
-  async addLikeThread({ userId, threadId }) {
+  async addLikeComment(userId, commentId) {
     throw new Error('COMMENT.METHOD_NOT_IMPLEMENTED');
   }
 
-  async deleteLikeThread({ userId, threadId }) {
+  async deleteLikeComment(userId, commentId) {
     throw new Error('COMMENT.METHOD_NOT_IMPLEMENTED');
   }
 
-  async verifyLikeThread({ userId, threadId }) {
+  async verifyLikeComment(userId, commentId) {
     throw new Error('COMMENT.METHOD_NOT_IMPLEMENTED');
   }
 
-  async totalLikeThread(threadId) {
+  async totalLikeComment(commentId) {
     throw new Error('COMMENT.METHOD_NOT_IMPLEMENTED');
   }
 }
