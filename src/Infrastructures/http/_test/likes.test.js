@@ -68,4 +68,77 @@ describe('/threads/{threadId}/comments/{commentId}/likes endpoint', () => {
       expect(responseJSON.status).toEqual('success');
     });
   });
+
+  describe('when PUT /threads/{threadId}/comments/{commentId}/likes', () => {
+    it('should response 200 when user unlike comments', async () => {
+      // Arrange
+      const { data: { accessToken } } = JSON.parse(loginResponse.payload);
+
+      await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/comment-123/likes',
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/comment-123/likes',
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJSON = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJSON.status).toEqual('success');
+    });
+  });
+
+  describe('when PUT /threads/{threadId}/comments/{commentId}/likes', () => {
+    it('should response 400 when thread not found', async () => {
+      // Arrange
+      const { data: { accessToken } } = JSON.parse(loginResponse.payload);
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/unkown_thread/comments/comment-123/likes',
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJSON = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJSON.status).toEqual('fail');
+      expect(responseJSON.message).toEqual('thread tidak ditemukan');
+    });
+  });
+
+  describe('when PUT /threads/{threadId}/comments/{commentId}/likes', () => {
+    it('should response 400 when comment not found', async () => {
+      // Arrange
+      const { data: { accessToken } } = JSON.parse(loginResponse.payload);
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/unkown_comment/likes',
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Assert
+      const responseJSON = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJSON.status).toEqual('fail');
+      expect(responseJSON.message).toEqual('komentar tidak ditemukan');
+    });
+  });
 });
