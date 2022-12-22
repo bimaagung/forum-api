@@ -101,23 +101,53 @@ describe('LikeRepositoryPostgres', () => {
   describe('totalLikeComment', () => {
     it('should correctly return the total number of likes on the comment', async () => {
       // Arrange
-      const commentId = 'comment-123';
+      const commentIds = ['comment-123', 'comment-124'];
 
+      const expectedLikes = [
+        {
+          comment_id: 'comment-124',
+          count: 1,
+        },
+        {
+          comment_id: 'comment-123',
+          count: 2,
+        },
+      ];
+
+      // add new user
       await UsersTableTestHelper.addUser({
         id: 'user-124',
         username: 'dicoding_b',
         password: 'secret',
         fullname: 'Dicoding B',
       });
+
+      // add new comment
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-124',
+        content: 'a comment',
+        owner: 'user-124',
+        threadId: 'thread-123',
+        isDelete: false,
+      });
+
+      // add like
       await LikesTableTestHelper.addCommentLikes({});
       await LikesTableTestHelper.addCommentLikes({
         id: 'like-124',
         userId: 'user-124',
         commentId: 'comment-123',
       });
+      await LikesTableTestHelper.addCommentLikes({
+        id: 'like-125',
+        userId: 'user-123',
+        commentId: 'comment-124',
+      });
 
-      // Action & Assert
-      await expect(likeRepositoryPostgres.totalLikeComment(commentId)).resolves.toBe(2);
+      // Action
+      const result = await likeRepositoryPostgres.totalLikeComment(commentIds);
+      // Assert
+      expect(result).toStrictEqual(expectedLikes);
     });
   });
 });
