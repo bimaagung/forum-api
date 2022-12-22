@@ -105,12 +105,12 @@ describe('LikeRepositoryPostgres', () => {
 
       const expectedLikes = [
         {
-          comment_id: 'comment-124',
-          count: 1,
-        },
-        {
           comment_id: 'comment-123',
           count: 2,
+        },
+        {
+          comment_id: 'comment-124',
+          count: 1,
         },
       ];
 
