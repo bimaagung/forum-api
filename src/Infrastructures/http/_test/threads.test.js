@@ -6,12 +6,14 @@ const container = require('../../container');
 const createServer = require('../createServer');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
+const LikesTableHelper = require('../../../../tests/LikesTableTestHelper');
 
 describe('/threads endpoint', () => {
   afterAll(async () => {
     await pool.end();
   });
   afterEach(async () => {
+    await LikesTableHelper.cleanTable();
     await RepliesTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
@@ -178,7 +180,14 @@ describe('/threads endpoint', () => {
   describe('when GET threads/{threadId}', () => {
     it('should response 200 and persisted threads', async () => {
       // Arrange
-      const expectedCommentPayloadA = {
+      const userPayloadB = {
+        id: 'user-124',
+        username: 'dicoding_b',
+        password: 'secret',
+        fullname: 'Dicoding Indonesia B',
+      };
+
+      const commentPayloadA = {
         id: 'comment-123',
         content: 'abc',
         threadId: 'thread-123',
@@ -187,7 +196,7 @@ describe('/threads endpoint', () => {
         isDelete: false,
       };
 
-      const expectedCommentPayloadB = {
+      const commentPayloadB = {
         id: 'comment-124',
         content: 'test comment',
         threadId: 'thread-123',
@@ -196,7 +205,7 @@ describe('/threads endpoint', () => {
         isDelete: true,
       };
 
-      const expectedReplyPayloadA = {
+      const replyPayloadA = {
         id: 'reply-123',
         content: 'abc',
         commentId: 'comment-123',
@@ -205,7 +214,7 @@ describe('/threads endpoint', () => {
         isDelete: false,
       };
 
-      const expectedReplyPayloadB = {
+      const replyPayloadB = {
         id: 'reply-124',
         content: 'test reply',
         commentId: 'comment-123',
@@ -214,14 +223,30 @@ describe('/threads endpoint', () => {
         isDelete: true,
       };
 
+      const likePayloadB = {
+        id: 'like-124',
+        userId: 'user-124',
+        commentId: 'comment-123',
+      };
+
+      const likePayloadC = {
+        id: 'like-125',
+        userId: 'user-123',
+        commentId: 'comment-124',
+      };
+
       const server = await createServer(container);
 
       await UsersTableTestHelper.addUser({});
+      await UsersTableTestHelper.addUser(userPayloadB);
       await ThreadsTableTestHelper.addThread({});
-      await CommentsTableTestHelper.addComment(expectedCommentPayloadA);
-      await CommentsTableTestHelper.addComment(expectedCommentPayloadB);
-      await RepliesTableTestHelper.addReply(expectedReplyPayloadA);
-      await RepliesTableTestHelper.addReply(expectedReplyPayloadB);
+      await CommentsTableTestHelper.addComment(commentPayloadA);
+      await CommentsTableTestHelper.addComment(commentPayloadB);
+      await RepliesTableTestHelper.addReply(replyPayloadA);
+      await RepliesTableTestHelper.addReply(replyPayloadB);
+      await LikesTableHelper.addCommentLikes({});
+      await LikesTableHelper.addCommentLikes(likePayloadB);
+      await LikesTableHelper.addCommentLikes(likePayloadC);
 
       // Action
       const response = await server.inject({
@@ -237,11 +262,11 @@ describe('/threads endpoint', () => {
       expect(responseJSON.data.thread.comments).toHaveLength(2);
       expect(responseJSON.data.thread.comments[0].replies).toHaveLength(2);
       expect(responseJSON.data.thread.comments[0].content)
-        .toEqual(expectedCommentPayloadA.content);
+        .toEqual(commentPayloadA.content);
       expect(responseJSON.data.thread.comments[1].content)
         .toEqual('**komentar telah dihapus**');
       expect(responseJSON.data.thread.comments[0].replies[0].content)
-        .toEqual(expectedReplyPayloadA.content);
+        .toEqual(replyPayloadA.content);
       expect(responseJSON.data.thread.comments[0].replies[1].content).toEqual('**balasan telah dihapus**');
       expect(responseJSON.data.thread.comments[0].date)
         .not.toBeNull();
@@ -251,6 +276,10 @@ describe('/threads endpoint', () => {
         .not.toBeNull();
       expect(responseJSON.data.thread.comments[0].replies[1].date)
         .not.toBeNull();
+      expect(responseJSON.data.thread.comments[0].likeCount)
+        .toEqual(2);
+      expect(responseJSON.data.thread.comments[1].likeCount)
+        .toEqual(1);
     });
 
     it('should response 404 if thread not found', async () => {
